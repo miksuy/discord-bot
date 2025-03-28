@@ -10,4 +10,5 @@ GOOGLE_CSE_ID=
 .help - Lists available commands<br>
 .img "searchword"  -  Searches Google Images<br>
 .yt "searchword"  -  Searches Youtube<br>
-.short "searchword"  -  Searches Youtube Shorts
+.short "searchword"  -  Searches Youtube Shorts<br>
+.about
