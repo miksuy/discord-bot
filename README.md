@@ -1,12 +1,10 @@
 # discord-bot
-install dependencies: pip install discord.py google-api-python-client
+install dependencies: pip install discord.py google-api-python-client python-dotenv
 
-TOKEN = your discord bot token
-
-YTAPI = your youtube data api key (for commands .yt and .short)
-
-IMGAPI = your google custom search api key (for .img)
-
-GOOGLE_CSE_ID = your search engine ID CX key (for .img)
+for .env (for .yt, .short, .img commands)
+DISCORD_TOKEN=
+YT_API_KEY=
+IMG_API_KEY=
+GOOGLE_CSE_ID=
 
 .help - Lists available commands

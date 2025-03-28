@@ -3,15 +3,16 @@ import discord
 import requests
 from discord.ext import commands
 from googleapiclient.discovery import build
+from dotenv import load_dotenv
+import os
 
-# type your bot token below
-TOKEN = ""
-#type your youtube api key below
-YTAPI = ""
-#type your google custom search api key below
-IMGAPI = ""
-#type your search engine ID (CX Key) below
-GOOGLE_CSE_ID = ""
+load_dotenv
+
+# Retrieve sensitive data from environment variables
+TOKEN = os.getenv("DISCORD_TOKEN")
+YTAPI = os.getenv("YT_API_KEY")
+IMGAPI = os.getenv("IMG_API_KEY")
+GOOGLE_CSE_ID = os.getenv("GOOGLE_CSE_ID")
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -95,5 +96,15 @@ async def short(ctx, *, searchword: str):
     video_url = f"https://www.youtube.com/shorts/{video_id}"
 
     await ctx.send(video_url)
+    
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
+
+    if "siel" in message.content.lower():
+        await message.channel.send("siel")
+    
+    await bot.process_commands(message)
 
 bot.run(TOKEN)
