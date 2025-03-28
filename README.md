@@ -7,4 +7,7 @@ YT_API_KEY=<br>
 IMG_API_KEY=<br>
 GOOGLE_CSE_ID=
 
-.help - Lists available commands
+.help - Lists available commands<br>
+.img "searchword"  -  Searches Google Images<br>
+.yt "searchword"  -  Searches Youtube<br>
+.short "searchword"  -  Searches Youtube Shorts
