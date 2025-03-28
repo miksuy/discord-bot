@@ -1,9 +1,9 @@
+from dotenv import load_dotenv
 import random
 import discord
 import requests
 from discord.ext import commands
 from googleapiclient.discovery import build
-from dotenv import load_dotenv
 import os
 
 load_dotenv
@@ -12,7 +12,7 @@ load_dotenv
 TOKEN = os.getenv("DISCORD_TOKEN")
 YTAPI = os.getenv("YT_API_KEY")
 IMGAPI = os.getenv("IMG_API_KEY")
-GOOGLE_CSE_ID = os.getenv("GOOGLE_CSE_ID")
+GOOGLE_CSE_ID = os.getenv("GOOGLE_CX_KEY")
 
 intents = discord.Intents.default()
 intents.message_content = True
