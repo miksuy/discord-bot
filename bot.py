@@ -32,7 +32,9 @@ async def help(ctx):
         "\n"
         ".yt <searchword> - Search Youtube with a searchword\n"
         "\n"
-        ".short <searchword> - Search a YT short with a searchword"
+        ".short <searchword> - Search a YT short with a searchword\n"
+        "\n"
+        ".about"
         ])
     await ctx.send(f"Available commands:\n{commands_list}")
 
@@ -96,6 +98,10 @@ async def short(ctx, *, searchword: str):
     video_url = f"https://www.youtube.com/shorts/{video_id}"
 
     await ctx.send(video_url)
+    
+@bot.command()
+async def about(ctx):
+    await ctx.send(f"https://github.com/miksuy/discord-bot")
     
 @bot.event
 async def on_message(message):
