@@ -19,7 +19,10 @@ async def on_ready():
 
 @bot.command()
 async def help(ctx):
-    commands_list = "\n".join(["!help - Lists available commands"])
+    commands_list = "\n".join([
+        "!help - Lists available commands"
+        "!yt <searchword> - Search Youtube with a searchword"
+        ])
     await ctx.send(f"Available commands:\n{commands_list}")
 
 @bot.command()
