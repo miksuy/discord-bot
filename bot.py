@@ -19,11 +19,29 @@ TENORAPI = os.getenv("TENOR_API_KEY")
 
 CLIENT_KEY = "discordbot"
 
+UPDATE_MESSAGE = "NONI botti on päivitetty"
+
 intents = discord.Intents.default()
+client = discord.Client(intents=intents)
 intents.message_content = True
 
 bot = commands.Bot(command_prefix='.', help_command=None, intents=intents)
 youtube = build('youtube', 'v3', developerKey=YTAPI)
+
+@client.event
+async def on_ready():
+    for guild in client.guilds:
+        for channel in guild.text_channels:
+            try:
+                await channel.send(UPDATE_MESSAGE)
+            except discord.Forbidden:  
+                print(f"Cannot send message in {channel.name} ({guild.name})")
+            except discord.HTTPException as e:
+                print(f"Failed to send message in {channel.name} ({guild.name}): {e}")
+
+    print("Message sent to all channels.")
+
+client.run(TOKEN)
 
 @bot.command()
 async def help(ctx):
