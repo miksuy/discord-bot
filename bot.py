@@ -27,7 +27,8 @@ intents.message_content = True
 bot = commands.Bot(command_prefix='.', help_command=None, intents=intents)
 youtube = build('youtube', 'v3', developerKey=YTAPI)
 
-search_history = {}
+yt_search_history = {}  # History for YouTube searches
+img_search_history = {}  # History for image searches
 
 @bot.event
 async def on_ready():
@@ -63,7 +64,7 @@ async def yt(ctx, *, searchword: str):
     try:
         user_id = ctx.author.id
         
-        if user_id not in search_history or search_history[user_id]["query"] != searchword:
+        if user_id not in yt_search_history or yt_search_history[user_id]["query"] != searchword:
             request = youtube.search().list(
                 part="snippet",
                 q=searchword,
@@ -71,16 +72,16 @@ async def yt(ctx, *, searchword: str):
                 maxResults=5
             )
             response = request.execute()
-            search_history[user_id] = {
+            yt_search_history[user_id] = {
                 "query": searchword,
                 "results": response["items"],
                 "index": 0,
                 "count": 1  # Start count from 1
             }
 
-        index = search_history[user_id]["index"]
-        videos = search_history[user_id]["results"]
-        count = search_history[user_id]["count"]
+        index = yt_search_history[user_id]["index"]
+        videos = yt_search_history[user_id]["results"]
+        count = yt_search_history[user_id]["count"]
 
         if index >= len(videos):
             await ctx.send("No more results available.")
@@ -91,11 +92,11 @@ async def yt(ctx, *, searchword: str):
         video_url = f"https://www.youtube.com/watch?v={video_id}"
 
         # Update the count and index
-        search_history[user_id]["index"] += 1
-        search_history[user_id]["count"] = count + 1  # Increment count by 1
+        yt_search_history[user_id]["index"] += 1
+        yt_search_history[user_id]["count"] = count + 1  # Increment count by 1
 
-        if search_history[user_id]["count"] >= 5:
-            del search_history[user_id]  # Reset history after 5 searches
+        if yt_search_history[user_id]["count"] >= 5:
+            del yt_search_history[user_id]  # Reset history after 5 searches
 
         await ctx.send(video_url)
     except Exception as e:
@@ -104,31 +105,51 @@ async def yt(ctx, *, searchword: str):
 @bot.command()
 async def img(ctx, *, searchword: str):
     try:
-        search_url = "https://www.googleapis.com/customsearch/v1"
-        params = {
-            "key": IMGAPI,
-            "cx": GOOGLE_CSE_ID,
-            "q": searchword,
-            "searchType": "image",
-            "num": 5
-        }
+        user_id = ctx.author.id
 
-        response = requests.get(search_url, params=params)
-        data = response.json()
+        if user_id not in img_search_history or img_search_history[user_id]["query"] != searchword:
+            # Make a request to Google Custom Search API to fetch images
+            url = "https://www.googleapis.com/customsearch/v1"
+            params = {
+                "q": searchword,
+                "cx": GOOGLE_CSE_ID,
+                "key": IMGAPI,
+                "searchType": "image",
+                "num": 5  # Fetch up to 5 images
+            }
+            response = requests.get(url, params=params)
+            data = response.json()
 
-        if "items" in data:
-            image = random.choice(data["items"])
-            image_url = image["link"]
+            images = data.get("items", [])
+            if not images:
+                await ctx.send("No images found.")
+                return
 
-            embed = discord.Embed(
-                title=f"Google Image Search: {searchword}",
-                color=discord.Color.blue()
-            )
-            embed.set_image(url=image_url)
+            img_search_history[user_id] = {
+                "query": searchword,
+                "results": images,
+                "index": 0,
+                "count": 1  # Start count from 1
+            }
 
-            await ctx.send(embed=embed)
-        else:
-            await ctx.send("⚠️ No images found! Try a different search.")
+        index = img_search_history[user_id]["index"]
+        images = img_search_history[user_id]["results"]
+        count = img_search_history[user_id]["count"]
+
+        if index >= len(images):
+            await ctx.send("No more results available.")
+            return
+
+        image_url = images[index]["link"]
+
+        # Update history
+        img_search_history[user_id]["index"] += 1
+        img_search_history[user_id]["count"] = count + 1
+
+        if img_search_history[user_id]["count"] >= 5:
+            del img_search_history[user_id]  # Reset after 5 searches
+
+        await ctx.send(image_url)
     except Exception as e:
         await ctx.send(f"Error occurred: {str(e)}")
 
