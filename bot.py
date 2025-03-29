@@ -19,8 +19,6 @@ TENORAPI = os.getenv("TENOR_API_KEY")
 
 CLIENT_KEY = "discordbot"
 
-UPDATE_MESSAGE = "NONI botti on päivitetty"
-
 intents = discord.Intents.default()
 intents.message_content = True
 
@@ -29,19 +27,6 @@ youtube = build('youtube', 'v3', developerKey=YTAPI)
 
 yt_search_history = {}  # History for YouTube searches
 img_search_history = {}  # History for image searches
-
-@bot.event
-async def on_ready():
-    for guild in bot.guilds:
-        for channel in guild.text_channels:
-            try:
-                await channel.send(UPDATE_MESSAGE)
-            except discord.Forbidden:  
-                print(f"Cannot send message in {channel.name} ({guild.name})")
-            except discord.HTTPException as e:
-                print(f"Failed to send message in {channel.name} ({guild.name}): {e}")
-
-    print("Message sent to all channels.")
 
 @bot.command()
 async def help(ctx):
@@ -103,7 +88,7 @@ async def yt(ctx, *, searchword: str):
         await ctx.send(f"Error occurred: {str(e)}")
 
 @bot.command()
-async def img(ctx, *, searchword: str):
+async def img(ctx, str = None, *, searchword: str):
     try:
         user_id = ctx.author.id
 
@@ -126,10 +111,21 @@ async def img(ctx, *, searchword: str):
                 await ctx.send("No images found.")
                 return
 
+            # Filter out non-image results (like TikTok links)
+            valid_images = []
+            for img in images:
+                image_url = img.get("link", "")
+                if image_url.endswith(('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff')):
+                    valid_images.append(img)
+            
+            if not valid_images:
+                await ctx.send("No valid images found.")
+                return
+
             # Store the search results and initialize the index
             img_search_history[user_id] = {
-                "query": searchword,
-                "results": images,
+                "query": search_query,
+                "results": valid_images,
                 "index": 0,
                 "count": 1  # Start counting from the first result
             }
