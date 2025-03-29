@@ -1,5 +1,5 @@
 # discord-bot
-1. install dependencies (requirements.txt): pip install discord.py google-api-python-client python-dotenv
+1. install dependencies (requirements.txt): pip install discord.py google-api-python-client python-dotenv ![David](https://img.shields.io/david/miksuy/discord-bot.svg)
 
 2. create your own .env file with the info below (for .yt, .short, .img commands)<br>
 DISCORD_TOKEN=(your discord bot token here)<br>
