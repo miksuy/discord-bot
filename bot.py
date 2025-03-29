@@ -5,6 +5,8 @@ import requests
 from discord.ext import commands
 from googleapiclient.discovery import build
 import os
+import urllib.parse
+import aiohttp
 
 load_dotenv()
 
@@ -14,6 +16,8 @@ YTAPI = os.getenv("YT_API_KEY")
 IMGAPI = os.getenv("IMG_API_KEY")
 GOOGLE_CSE_ID = os.getenv("GOOGLE_CX_KEY")
 TENORAPI = os.getenv("TENOR_API_KEY")
+
+CLIENT_KEY = "discordbot"
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -113,25 +117,28 @@ async def about(ctx):
     
 @bot.command()
 async def tenor(ctx, *, searchword: str):
-    url = f"https://api.tenor.com/v1/search?q={searchword}&key={TENORAPI}&limit=5"
-    
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        
-        if 'results' in data and len(data['results']) > 0:
-            gifs = data['results']
-            
-            random_gif = random.choice(gifs)
-            
-            gif_url = random_gif['media'][0]['gif']['url']
-            
-            await ctx.send(gif_url)
-        else:
-            await ctx.send(f"Sorry, I couldn't find any GIFs for '{searchword}'.")
-    else:
-        await ctx.send(f"Failed to fetch data from Tenor. Status code: {response.status_code}")
+    searchword_encoded = urllib.parse.quote(searchword)
+    url = f"https://tenor.googleapis.com/v2/search?q={searchword_encoded}&key={TENORAPI}&client_key={CLIENT_KEY}&limit=5"
 
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                data = await response.json()
+
+                if response.status == 200 and 'results' in data and len(data['results']) > 0:
+                    random_gif = random.choice(data['results'])
+
+                    if 'media_formats' in random_gif and 'gif' in random_gif['media_formats']:
+                        gif_url = random_gif['media_formats']['gif']['url']
+                        await ctx.send(gif_url)
+                    else:
+                        await ctx.send("Sorry, I couldn't find a valid GIF for this search.")
+                else:
+                    await ctx.send(f"Sorry, I couldn't find any GIFs for '{searchword}'.")
+    
+    except Exception as e:
+        await ctx.send(f"An error occurred: {str(e)}")
+        
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
