@@ -124,7 +124,7 @@ async def img(ctx, str = None, *, searchword: str):
 
             # Store the search results and initialize the index
             img_search_history[user_id] = {
-                "query": search_query,
+                "query": searchword,
                 "results": valid_images,
                 "index": 0,
                 "count": 1  # Start counting from the first result
