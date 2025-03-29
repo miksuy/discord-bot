@@ -113,31 +113,19 @@ async def about(ctx):
     
 @bot.command()
 async def tenor(ctx, *, searchword: str):
-    # Tenor API URL with limit set to 5
     url = f"https://api.tenor.com/v1/search?q={searchword}&key={TENORAPI}&limit=5"
     
-    # Send GET request to Tenor API
     response = requests.get(url)
-    
-    # Log the response for debugging
-    print(f"Response Status Code: {response.status_code}")
-    print(f"Response Text: {response.text}")
-    
-    # Check if the response is successful
     if response.status_code == 200:
         data = response.json()
         
-        # Check if there are results in the response
         if 'results' in data and len(data['results']) > 0:
             gifs = data['results']
             
-            # Pick a random GIF from the list
             random_gif = random.choice(gifs)
             
-            # Get the URL of the GIF
             gif_url = random_gif['media'][0]['gif']['url']
             
-            # Send the GIF URL as a message
             await ctx.send(gif_url)
         else:
             await ctx.send(f"Sorry, I couldn't find any GIFs for '{searchword}'.")
