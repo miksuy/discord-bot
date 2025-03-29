@@ -107,8 +107,8 @@ async def img(ctx, *, searchword: str):
     try:
         user_id = ctx.author.id
 
+        # If the user hasn't searched for this word before, perform a new search
         if user_id not in img_search_history or img_search_history[user_id]["query"] != searchword:
-            # Make a request to Google Custom Search API to fetch images
             url = "https://www.googleapis.com/customsearch/v1"
             params = {
                 "q": searchword,
@@ -120,36 +120,44 @@ async def img(ctx, *, searchword: str):
             response = requests.get(url, params=params)
             data = response.json()
 
+            # Extract image items from the response
             images = data.get("items", [])
             if not images:
                 await ctx.send("No images found.")
                 return
 
+            # Store the search results and initialize the index
             img_search_history[user_id] = {
                 "query": searchword,
                 "results": images,
                 "index": 0,
-                "count": 1  # Start count from 1
+                "count": 1  # Start counting from the first result
             }
 
+        # Get the current index and the results for that user
         index = img_search_history[user_id]["index"]
         images = img_search_history[user_id]["results"]
         count = img_search_history[user_id]["count"]
 
+        # If all images have been shown, tell the user there are no more
         if index >= len(images):
             await ctx.send("No more results available.")
             return
 
+        # Fetch the image URL from the search results
         image_url = images[index]["link"]
 
-        # Update history
+        # Update search history (move to the next image)
         img_search_history[user_id]["index"] += 1
         img_search_history[user_id]["count"] = count + 1
 
+        # Reset history after 5 results
         if img_search_history[user_id]["count"] >= 5:
-            del img_search_history[user_id]  # Reset after 5 searches
+            del img_search_history[user_id]  # Clear after 5 images
 
+        # Send the image URL to the user
         await ctx.send(image_url)
+
     except Exception as e:
         await ctx.send(f"Error occurred: {str(e)}")
 
