@@ -74,26 +74,32 @@ async def yt(ctx, *, searchword: str):
                 maxResults=5
             )
             response = request.execute()
-            search_history[user_id] = {"query": searchword, "results": response["items"], "index": 0, "count": 0}
-        
+            search_history[user_id] = {
+                "query": searchword,
+                "results": response["items"],
+                "index": 0,
+                "count": 1  # Start count from 1
+            }
+
         index = search_history[user_id]["index"]
         videos = search_history[user_id]["results"]
         count = search_history[user_id]["count"]
-        
+
         if index >= len(videos):
             await ctx.send("No more results available.")
             return
-        
+
         video = videos[index]
         video_id = video["id"]["videoId"]
         video_url = f"https://www.youtube.com/watch?v={video_id}"
-        
-        search_history[user_id]["index"] += 1  # Increment index for next search
-        search_history[user_id]["count"] += 1  # Increment search count
-        
+
+        # Update the count and index
+        search_history[user_id]["index"] += 1
+        search_history[user_id]["count"] = count + 1  # Increment count by 1
+
         if search_history[user_id]["count"] >= 5:
             del search_history[user_id]  # Reset history after 5 searches
-        
+
         await ctx.send(video_url)
     except Exception as e:
         await ctx.send(f"Error occurred: {str(e)}")
@@ -137,7 +143,7 @@ async def short(ctx, *, searchword: str):
             q=searchword + " short",
             type="video",
             videoDuration="short",
-            maxResults=5
+            maxResults=3
         )
         response = request.execute()
 
