@@ -13,6 +13,7 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 YTAPI = os.getenv("YT_API_KEY")
 IMGAPI = os.getenv("IMG_API_KEY")
 GOOGLE_CSE_ID = os.getenv("GOOGLE_CX_KEY")
+TENORAPI = os.getenv("TENOR_API_KEY")
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -29,6 +30,8 @@ async def help(ctx):
         ".yt <searchword> - Search Youtube with a searchword\n"
         "\n"
         ".short <searchword> - Search a YT short with a searchword\n"
+        "\n"
+        ".tenor <searchword> - Search a GIF\n"
         "\n"
         ".about"
         ])
@@ -107,6 +110,25 @@ async def short(ctx, *, searchword: str):
 @bot.command()
 async def about(ctx):
     await ctx.send(f"https://github.com/miksuy/discord-bot")
+    
+@bot.command()
+async def tenor(ctx, *, searchword: str):
+    url = f"https://api.tenor.com/v1/search?q={searchword}&key={TENORAPI}&limit=5"
+    
+    response = requests.get(url)
+    
+    if response.status_code == 200:
+        data = response.json()
+        
+        gifs = data['results']
+        
+        random_gif = random.choice(gifs)
+        
+        gif_url = random_gif['media'][0]['gif']['url']
+        
+        await ctx.send(gif_url)
+    else:
+        await ctx.send("Sorry, I couldn't find any GIFs for that search word.")
 
 @bot.event
 async def on_message(message):

@@ -6,9 +6,11 @@ DISCORD_TOKEN=(your discord bot token here)<br>
 YT_API_KEY=(youtube data api v3 key here)<br>
 IMG_API_KEY=(your google custom search api key here)<br>
 GOOGLE_CX_KEY=(your search engine ID CX Key here)
+TENORAPI=(your tenor api key here)
 
 .help - Lists available commands<br>
 .img "searchword"  -  Searches Google Images<br>
 .yt "searchword"  -  Searches Youtube<br>
 .short "searchword"  -  Searches Youtube Shorts<br>
+.tenor "searchword" - Search a GIF<br>
 .about  -  Information
