@@ -31,7 +31,7 @@ search_history = {}
 
 @bot.event
 async def on_ready():
-    for guild in client.guilds:
+    for guild in bot.guilds:
         for channel in guild.text_channels:
             try:
                 await channel.send(UPDATE_MESSAGE)
