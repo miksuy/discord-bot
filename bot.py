@@ -88,7 +88,7 @@ async def yt(ctx, *, searchword: str):
         await ctx.send(f"Error occurred: {str(e)}")
 
 @bot.command()
-async def img(ctx, str = None, *, searchword: str):
+async def img(ctx, *, searchword: str):
     try:
         user_id = ctx.author.id
 
