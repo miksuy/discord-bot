@@ -28,6 +28,8 @@ intents.message_content = True
 bot = commands.Bot(command_prefix='.', help_command=None, intents=intents)
 youtube = build('youtube', 'v3', developerKey=YTAPI)
 
+search_history = {}
+
 @client.event
 async def on_ready():
     for guild in client.guilds:
@@ -62,18 +64,36 @@ async def help(ctx):
 @bot.command()
 async def yt(ctx, *, searchword: str):
     try:
-        request = youtube.search().list(
-            part="snippet",
-            q=searchword,
-            type="video",
-            maxResults=10
-        )
-        response = request.execute()
-
-        video = random.choice(response["items"])
+        user_id = ctx.author.id
+        
+        if user_id not in search_history or search_history[user_id]["query"] != searchword:
+            request = youtube.search().list(
+                part="snippet",
+                q=searchword,
+                type="video",
+                maxResults=5
+            )
+            response = request.execute()
+            search_history[user_id] = {"query": searchword, "results": response["items"], "index": 0, "count": 0}
+        
+        index = search_history[user_id]["index"]
+        videos = search_history[user_id]["results"]
+        count = search_history[user_id]["count"]
+        
+        if index >= len(videos):
+            await ctx.send("No more results available.")
+            return
+        
+        video = videos[index]
         video_id = video["id"]["videoId"]
         video_url = f"https://www.youtube.com/watch?v={video_id}"
-
+        
+        search_history[user_id]["index"] += 1  # Increment index for next search
+        search_history[user_id]["count"] += 1  # Increment search count
+        
+        if search_history[user_id]["count"] >= 5:
+            del search_history[user_id]  # Reset history after 5 searches
+        
         await ctx.send(video_url)
     except Exception as e:
         await ctx.send(f"Error occurred: {str(e)}")
@@ -87,7 +107,7 @@ async def img(ctx, *, searchword: str):
             "cx": GOOGLE_CSE_ID,
             "q": searchword,
             "searchType": "image",
-            "num": 10
+            "num": 5
         }
 
         response = requests.get(search_url, params=params)
@@ -117,7 +137,7 @@ async def short(ctx, *, searchword: str):
             q=searchword + " short",
             type="video",
             videoDuration="short",
-            maxResults=10
+            maxResults=5
         )
         response = request.execute()
 
