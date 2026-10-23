@@ -1,4 +1,5 @@
 # discord-bot
+# OUT OF DATE. Tenor api is gone
 ## Installation
 1. install dependencies: pip install -r requirements.txt
 
