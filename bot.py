@@ -32,7 +32,7 @@ async def help(ctx):
         "\n"
         ".yt <searchword> - Search Youtube with a searchword\n"
         "\n"
-        ".gif <searchword> - Search Giphy with a gif\n"
+        ".gif <searchword> - Search Giphy for a gif\n"
         "\n"
         ".about"
         ])
