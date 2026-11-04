@@ -5,8 +5,6 @@ import requests
 from discord.ext import commands
 from googleapiclient.discovery import build
 import os
-import urllib.parse
-import aiohttp
 
 load_dotenv()
 
@@ -15,8 +13,6 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 YTAPI = os.getenv("YT_API_KEY")
 IMGAPI = os.getenv("IMG_API_KEY")
 GOOGLE_CSE_ID = os.getenv("GOOGLE_CX_KEY")
-
-CLIENT_KEY = "discordbot"
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -161,7 +157,7 @@ async def img(ctx, *, searchword: str):
 
 @bot.command()
 async def about(ctx):
-    await ctx.send(f"https://github.com/miksuy/discord-bot")
+    await ctx.send(f"<https://github.com/miksuy/discord-bot>")
     
 @bot.event
 async def on_message(message):
