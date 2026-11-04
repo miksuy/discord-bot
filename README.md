@@ -2,7 +2,7 @@
 ## Installation
 1. install dependencies: pip install -r requirements.txt
 
-2. create a .env file in the project root with the following information:<br>
+2. create a file called .env in the project directory with the following information:<br>
 
     DISCORD_TOKEN=(your discord bot token here)<br>
     YT_API_KEY=(youtube data api v3 key here)<br>
