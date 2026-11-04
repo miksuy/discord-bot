@@ -32,6 +32,8 @@ async def help(ctx):
         "\n"
         ".yt <searchword> - Search Youtube with a searchword\n"
         "\n"
+        ".gif <searchword> - Search Giphy with a gif\n"
+        "\n"
         ".about"
         ])
     await ctx.send(f"Available commands:\n{commands_list}")
