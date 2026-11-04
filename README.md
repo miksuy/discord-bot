@@ -8,6 +8,7 @@
     YT_API_KEY=(youtube data api v3 key here)<br>
     IMG_API_KEY=(your google custom search api key here)<br>
     GOOGLE_CX_KEY=(your search engine ID CX Key here)<br>
+    GIPHY_API_KEY=(your Giphy api key here)<br>
 
 3. Run the bot
 
@@ -16,5 +17,6 @@
 ## Commands
 .help - Lists available commands<br>
 .img "searchword"  -  Searches Google Images<br>
+.gif "searchword"  -  Searches Giphy for a GIF<br>
 .yt "searchword"  -  Searches Youtube<br>
 .about  -  Information

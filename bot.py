@@ -13,6 +13,7 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 YTAPI = os.getenv("YT_API_KEY")
 IMGAPI = os.getenv("IMG_API_KEY")
 GOOGLE_CSE_ID = os.getenv("GOOGLE_CX_KEY")
+GIPHYAPI = os.getenv("GIPHY_API_KEY")
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -154,6 +155,34 @@ async def img(ctx, *, searchword: str):
 
     except Exception as e:
         await ctx.send(f"Error occurred: {str(e)}")
+
+@bot.command()
+async def gif(ctx, *, searchword: str):
+    try:
+        url = "https://api.giphy.com/v1/gifs/search"
+
+        params = {
+            "api_key": GIPHYAPI,
+            "q": searchword,
+            "limit": 5,
+        }
+
+        response = requests.get(url, params=params)
+        data = response.json()
+
+        gifs = data.get("data", [])
+
+        if not gifs:
+            await ctx.send(f"No GIFs found for '{searchword}'.")
+            return
+
+        random_gif = random.choice(gifs)
+        gif_url = random_gif["images"]["original"]["url"]
+
+        await ctx.send(gif_url)
+
+    except Exception as e:
+        await ctx.send(f"An error occurred: {str(e)}")
 
 @bot.command()
 async def about(ctx):
