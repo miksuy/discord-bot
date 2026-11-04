@@ -106,12 +106,19 @@ async def img(ctx, *, searchword: str):
                 await ctx.send("No images found.")
                 return
 
-            # Filter out non-image results (like TikTok links)
+            # Filter out non-image results
             valid_images = []
+
             for img in images:
-                image_url = img.get("link", "")
-                if image_url.endswith(('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff')):
-                    valid_images.append(img)
+                mime_type = img.get("mime", "").lower()
+
+                if mime_type in (
+                    "image/jpeg",
+                     "image/png",
+                     "image/gif",
+                    "image/webp"
+                ):
+                     valid_images.append(img)
             
             if not valid_images:
                 await ctx.send("No valid images found.")
